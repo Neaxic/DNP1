@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using DNP1___Assignment1.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using DNP1___Assignment1.Data;
 using DNP1___Assignment1.Models;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace DNP1___Assignment1
 {
@@ -31,7 +34,26 @@ namespace DNP1___Assignment1
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<ITodosData, TodoJSONData>();
-            services.AddSingleton<IUserService, InMemoryUserService>();
+            services.AddScoped<IUserService, InMemoryUserService>();
+            services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("SecurityLevel4", a =>
+                {
+                    a.RequireAuthenticatedUser().RequireClaim("Level", "4");
+                });
+                options.AddPolicy("SecurityLevel2", a =>
+                {
+                    a.RequireAuthenticatedUser().RequireAssertion(context =>
+                    {
+                        Claim levelClaim = context.User.FindFirst(claim => claim.Type.Equals("Level"));
+                        if (levelClaim == null) return false;
+                        return int.Parse(levelClaim.Value) >= 2;
+                    });
+                });
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
