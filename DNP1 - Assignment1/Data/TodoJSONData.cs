@@ -3,89 +3,69 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using DNP1___Assignment1.Models;
+using Models;
 
 namespace DNP1___Assignment1.Data
 {
     public class TodoJSONData : ITodosData
     {
-        private string todoFile = "todos.json";
-        private IList<Todo> todos;
+        private string adultFile = "adults.json";
+        private IList<Adult> adults;
 
         public TodoJSONData()
         {
-            if (!File.Exists(todoFile))
+            if (!File.Exists(adultFile))
             {
-                Seed();
-                string todosAsJson = JsonSerializer.Serialize(todos);
-                File.WriteAllText(todoFile, todosAsJson);
+                //Seed();
+                string todosAsJson = JsonSerializer.Serialize(adults);
+                File.WriteAllText(adultFile, todosAsJson);
             }
             else
             {
-                string content = File.ReadAllText(todoFile);
-                todos = JsonSerializer.Deserialize<List<Todo>>(content);
+                string content = File.ReadAllText(adultFile);
+                adults = JsonSerializer.Deserialize<List<Adult>>(content);
             }
         }
 
-        private void Seed()
+        public IList<Adult> GetAdults()
         {
-            Todo[] ts =
-            {
-                new Todo
-                {
-                    UserId = 1,
-                    TodoId = 1,
-                    Title = "Tjen penge",
-                    IsCompleted = false
-                },
-                new Todo
-                {
-                    UserId = 2,
-                    TodoId = 2,
-                    Title = "Scor bitches",
-                    IsCompleted = true
-                },
-            };
-            todos = ts.ToList();
-        }
-
-        public IList<Todo> GetTodos()
-        {
-            List<Todo> tmp = new List<Todo>(todos);
+            List<Adult> tmp = new List<Adult>(adults);
             return tmp;
         }
-
-        public void AddTodo(Todo todo)
+        
+        public void AddAdult(Adult adult)
         {
-            int currIndex = todos.Max(todo => todo.TodoId);
-            todo.TodoId = (++currIndex);
+            //Generer adult ID
+            int currIndex = adults.Max(adult => adult.Id);
+            adult.Id = (++currIndex);
 
-            todos.Add(todo);
-            string todosAsJson = JsonSerializer.Serialize(todos);
-            File.WriteAllText(todoFile, todosAsJson);
+            adults.Add(adult);
+            string todosAsJson = JsonSerializer.Serialize(adults);
+            File.WriteAllText(adultFile, todosAsJson);
 
         }
 
-        public void RemoveTodo(int todoId)
+        public void RemoveAdult(int adultID)
         {
-            Todo toRemove = todos.First(t => t.TodoId == todoId);
-            todos.Remove(toRemove);
-            string todosAsJson = JsonSerializer.Serialize(todos);
-            File.WriteAllText(todoFile, todosAsJson);
+            Adult toRemove = adults.First(t => t.Id == adultID);
+            adults.Remove(toRemove);
+            string adultsAsJson = JsonSerializer.Serialize(adults);
+            File.WriteAllText(adultFile, adultsAsJson);
         }
 
-        public void Update(Todo todo)
+        public void Update(Adult adult)
         {
-            Todo toUpdate = todos.First(t => t.TodoId == todo.TodoId);
-            toUpdate.IsCompleted = todo.IsCompleted;
-            toUpdate.Title = todo.Title;
+            Adult toUpdate = adults.First(t => t.Id == adult.Id);
+            //toUpdate.IsCompleted = todo.IsCompleted;
+            //toUpdate.Title = todo.Title;
             
-            string todosAsJson = JsonSerializer.Serialize(todos);
-            File.WriteAllText(todoFile, todosAsJson);
+            string adultAsJson = JsonSerializer.Serialize(adults);
+            File.WriteAllText(adultFile, adultAsJson);
         }
 
-        public Todo get(int id)
+        public Adult get(int id)
         {
-            return todos.FirstOrDefault(t => t.TodoId == id);
+            return adults.FirstOrDefault(t => t.Id == id);
         }
     }
 }

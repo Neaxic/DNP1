@@ -14,10 +14,16 @@ namespace DNP1___Assignment1.Models
             {
                 new User
                 {
-                    UserName = "Andreas",
-                    Password = "12345",
-                    Role = "Student",
-                    SecurityLevel = 5
+                    UserName = "lvl1",
+                    Password = "123",
+                    Role = "Mod",
+                    SecurityLevel = 1
+                },
+                new User{
+                    UserName = "lvl2",
+                    Password = "123",
+                    Role = "Admin",
+                    SecurityLevel = 2
                 }
             }.ToList();
         }

@@ -1,22 +1,62 @@
-@page "/AddTodo"
-@using DNP1___Assignment1.Models
+@page "/AddAdult"
+@attribute [Authorize(Policy = "SecurityLevel2")]
 @using DNP1___Assignment1.Data
+@using global::Models
 
-@inject ITodosData TodoData
+@using Microsoft.AspNetCore.Components
+
+@inject ITodosData AdultData
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 
-<h3>AddTodo</h3>
+<h3>Add Family member</h3>
 
-<EditForm Model="@newTodoItem" OnValidSubmit="@AddNewTodo">
+<EditForm Model="@newAdult" OnValidSubmit="@AddNewAdult">
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <ValidationSummary></ValidationSummary>
     <div class="form-group">
-        User Id: <br/>
-        <InputNumber @bind-Value="newTodoItem.UserId"></InputNumber>
+        Firstname: <br/>
+        <InputTextArea @bind-Value="newAdult.FirstName"></InputTextArea>
     </div>
     <div class="form-group">
-        Title: <br/>
-        <InputTextArea rows="4" @bind-Value="@newTodoItem.Title"></InputTextArea>
+        Lastname: <br/>
+        <InputTextArea rows="4" @bind-Value="@newAdult.LastName"></InputTextArea>
+    </div>
+    <div class="form-group">
+        Age: <br/>
+        <InputNumber rows="4" @bind-Value="@newAdult.Age"></InputNumber>
+    </div>
+    <div class="form-group">
+        Sex: <br/>
+        <InputTextArea rows="4" @bind-Value="@newAdult.Sex"></InputTextArea>
+    </div>
+
+    <p>Job stuff</p>
+    <div class="form-group">
+        Job Title: <br/>
+        <InputTextArea rows="4" @bind-Value="@newAdult.JobTitle.JobTitle"></InputTextArea>
+    </div>
+    <div class="form-group">
+        Job Salary: <br/>
+        <InputNumber rows="4" @bind-Value="@newAdult.JobTitle.Salary"></InputNumber>
+    </div>
+
+    <p>Nice to knows: </p>
+    <div class="form-group">
+        Hair color: <br/>
+        <InputTextArea rows="4" @bind-Value="@newAdult.HairColor"></InputTextArea>
+    </div>
+    <div class="form-group">
+        Eye color: <br/>
+        <InputTextArea rows="4" @bind-Value="@newAdult.EyeColor"></InputTextArea>
+    </div>
+    <div class="form-group">
+        Weight: <br/>
+        <InputNumber rows="4" @bind-Value="@newAdult.Weight"></InputNumber>
+    </div>
+    <div class="form-group">
+        Height: <br/>
+        <InputNumber rows="4" @bind-Value="@newAdult.Height"></InputNumber>
     </div>
     <p class="actions">
         <button class="btn btn-outline-danger" type="submit">Create</button>
@@ -24,12 +64,18 @@
 </EditForm>
 
 @code {
-    private Todo newTodoItem = new Todo();
+    private Adult newAdult;
 
-    private void AddNewTodo()
+    protected override async Task OnInitializedAsync()
     {
-        TodoData.AddTodo(newTodoItem);
-        NavigationManager.NavigateTo("/Todos");
+        newAdult = new Adult();
+        newAdult.JobTitle = new Job();
+    }
+
+    private void AddNewAdult()
+    {
+        AdultData.AddAdult(newAdult);
+        NavigationManager.NavigateTo("/Adults");
     }
 
 }
