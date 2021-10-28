@@ -1,0 +1,73 @@
+@page "/login"
+@namespace LoginComponent
+@using Authorization
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Nav
+
+
+<h3>Security Tab</h3>
+<AuthorizeView>
+    <NotAuthorized>
+        <div class="form-group">
+            <label>User name:</label>
+            <input type="text" placeholder="user name" @bind-value="username"></input>
+        </div>
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" placeholder="password" @bind-value="password"></input>
+        </div>
+        <div style="color:red">@errorMessage</div>
+
+        <a href="" @onclick="performLogin">
+            login
+        </a>
+    </NotAuthorized>
+    <Authorized>
+        <h4>User Infomation</h4>
+        <p>Username: @context.User.Identity.Name</p>
+        <p>Level: @context.User.FindFirst(claim => claim.Type.Equals("Level")).Value</p>
+        <a href="" @onclick="PerformLogout">
+            logout
+        </a>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    string username;
+    string password;
+    string errorMessage;
+
+    public async Task performLogin()
+    {
+        errorMessage = "";
+        try
+        {
+            ((CustomAuthenticationStateProvider) AuthenticationStateProvider).ValidateLogin(username, password);
+            username = "";
+            password = "";
+            Nav.NavigateTo("/");
+        }
+        catch (Exception e)
+        {
+            errorMessage = e.Message;
+        }
+    }
+
+    public async Task PerformLogout()
+    {
+        errorMessage = "";
+        username = "";
+        password = "";
+        try
+        {
+            ((CustomAuthenticationStateProvider) AuthenticationStateProvider).Logout();
+            Nav.NavigateTo("/");
+        }
+        catch (Exception e)
+        {
+            errorMessage = e.Message;
+        }
+    }
+
+}
