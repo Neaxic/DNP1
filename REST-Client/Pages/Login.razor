@@ -20,7 +20,7 @@
         <div style="color:red">@errorMessage</div>
 
         <a href="" @onclick="performLogin">
-            login
+            Login
         </a>
     </NotAuthorized>
     <Authorized>
@@ -28,7 +28,7 @@
         <p>Username: @context.User.Identity.Name</p>
         <p>Level: @context.User.FindFirst(claim => claim.Type.Equals("Level")).Value</p>
         <a href="" @onclick="PerformLogout">
-            logout
+            Logout
         </a>
     </Authorized>
 </AuthorizeView>
@@ -43,10 +43,10 @@
         errorMessage = "";
         try
         {
-            ((CustomAuthenticationStateProvider) AuthenticationStateProvider).ValidateLogin(username, password);
+            await ((CustomAuthenticationStateProvider) AuthenticationStateProvider).ValidateLogin(username, password);
             username = "";
             password = "";
-            Nav.NavigateTo("/");
+            Nav.NavigateTo("/adults");
         }
         catch (Exception e)
         {
@@ -62,7 +62,6 @@
         try
         {
             ((CustomAuthenticationStateProvider) AuthenticationStateProvider).Logout();
-            Nav.NavigateTo("/");
         }
         catch (Exception e)
         {

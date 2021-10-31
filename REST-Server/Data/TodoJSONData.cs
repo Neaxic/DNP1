@@ -56,11 +56,11 @@ namespace Data
         public void Update(Adult adult)
         {
             Adult toUpdate = adults.First(t => t.Id == adult.Id);
-            //toUpdate.IsCompleted = todo.IsCompleted;
-            //toUpdate.Title = todo.Title;
+            adults.Remove(toUpdate);
+            adults.Add(adult);
             
-            string adultAsJson = JsonSerializer.Serialize(adults);
-            File.WriteAllText(adultFile, adultAsJson);
+            string adultsAsJson = JsonSerializer.Serialize(adults);
+            File.WriteAllText(adultFile, adultsAsJson);
         }
 
         public Adult get(int id)

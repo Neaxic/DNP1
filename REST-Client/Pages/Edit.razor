@@ -1,0 +1,59 @@
+@page "/Edit/{Id:int}"
+@using Models
+@using Data
+@using Microsoft.AspNetCore.Components
+
+@inject ITodosData AdultData
+@inject NavigationManager NavigationManager
+
+<h3>Edit adult with id: @Id</h3>
+@if (adultToEdit == null)
+{
+    <em>Adult Not found!</em>
+}
+else
+{
+    <EditForm Model="@adultToEdit" OnValidSubmit="@Save">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <ValidationSummary></ValidationSummary>
+        <div class="form-group">
+            User Id: <br/>
+            <InputNumber @bind-Value="adultToEdit.Id"></InputNumber>
+        </div>
+        <div class="form-group">
+            Firstname: <br/>
+            <InputTextArea rows="4" @bind-Value="adultToEdit.FirstName"></InputTextArea>
+        </div>
+                <div class="form-group">
+                    Firstname: <br/>
+                    <InputTextArea rows="4" @bind-Value="adultToEdit.LastName"></InputTextArea>
+                </div>
+
+        <p class="actions">
+            <button class="btn btn-outline-dark" type="submit">Save</button>
+        </p>
+    </EditForm>
+    
+}
+
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private Adult adultToEdit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        adultToEdit = AdultData.get(Id);
+    }
+
+    private void Save()
+    {
+        AdultData.Update(adultToEdit);
+        NavigationManager.NavigateTo("/Adults");
+    }
+
+}

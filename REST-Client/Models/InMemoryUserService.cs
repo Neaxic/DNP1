@@ -1,47 +1,49 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Models
 {
     public class InMemoryUserService : IUserService
     {
-        private List<User> users;
-        
-        public InMemoryUserService()
+        public async Task<User> ValidateUser(string username, string password)
         {
-            users = new[]
-            {
-                new User
-                {
-                    UserName = "lvl1",
-                    Password = "123",
-                    Role = "Mod",
-                    SecurityLevel = 1
-                },
-                new User{
-                    UserName = "lvl2",
-                    Password = "123",
-                    Role = "Admin",
-                    SecurityLevel = 2
-                }
-            }.ToList();
+            using HttpClient client = new HttpClient();
+
+            HttpResponseMessage response =
+                await client.GetAsync("https://localhost:5001/Login/ValidateLogin?username=" + username + "&pass=" +password);
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($@"Error: {response.StatusCode}, {response.ReasonPhrase}");
+
+            string result = await response.Content.ReadAsStringAsync();
+            User login = JsonSerializer.Deserialize<User>(result);
+            Console.WriteLine(result);
+
+            return login;
         }
-        
-        public User ValidateUser(string userName, string Password)
+/*
+        private async void allUsers()
         {
-            User first = users.FirstOrDefault(user => user.UserName.Equals(userName));
-            if (first == null)
-            {
-                throw new Exception("User not found");
-            }
+            using HttpClient client = new HttpClient();
 
-            if (!first.Password.Equals(Password))
-            {
-                throw new Exception("Password dont match");
-            }
+            HttpResponseMessage response = await client.GetAsync("https://localhost:5001/Login/allLogins");
 
-            return first;
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($@"Error: {response.StatusCode}, {response.ReasonPhrase}");
+            
+            string result = await response.Content.ReadAsStringAsync();
+
+            List<User> users = JsonSerializer.Deserialize<List<User>>(result);
+            foreach (var VARIABLE in users)
+            {
+             Console.WriteLine(VARIABLE.UserName);   
+            }
+            userlist = users;
         }
+    */
     }
 }

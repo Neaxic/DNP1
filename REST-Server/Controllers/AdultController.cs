@@ -7,58 +7,25 @@ using Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Models;
-using Data;
 
 namespace REST_Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class AdultController : ControllerBase
     {
+        public ITodosData Adultdata = new TodoJSONData();
+
         private readonly ILogger<AdultController> _logger;
         private IList<Adult> adults;
 
         public AdultController(ILogger<AdultController> logger)
         {
             _logger = logger;
-            adults = new List<Adult>(2);
-            adults.Add(new Adult
-            {
-                JobTitle = new Job
-                {
-                    JobTitle = "Front End Web Developer",
-                    Salary = 66408,
-                },
-                Id = 1,
-                FirstName = "Lyla",
-                LastName = "Humphrey",
-                HairColor = "Black",
-                EyeColor = "Brown",
-                Age = 36,
-                Weight = 64,
-                Height = 147,
-                Sex = "F"
-            });
-            adults.Add(new Adult
-            {
-                JobTitle = new Job
-                {
-                    JobTitle = "Front End Web Developer",
-                    Salary = 66408,
-                },
-                Id = 1,
-                FirstName = "Bente",
-                LastName = "Humphrey",
-                HairColor = "Black",
-                EyeColor = "Brown",
-                Age = 36,
-                Weight = 64,
-                Height = 147,
-                Sex = "F"
-            });
+            adults = Adultdata.GetAdults();
         }
 
-        [HttpGet]
+        [HttpGet("~/Adults")]
         public IEnumerable<Adult> Get()
         {
             return Enumerable.Range(1, adults.Count).Select(index => new Adult
@@ -80,5 +47,62 @@ namespace REST_Server.Controllers
                 })
                 .ToArray();
         }
+
+        [HttpPost]
+        public async Task<ActionResult<Adult>> AddAdult([FromBody] Adult adult)
+        {
+            try
+            {
+                Adultdata.AddAdult(adult);
+                return Ok(adults);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult<int>> RemoveAdult([FromQuery] int id)
+        {
+            try
+            {
+                Adultdata.RemoveAdult(id);
+                return Ok(adults);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+        
+        [HttpPost]
+        public async Task<ActionResult<Adult>> Update([FromBody] Adult adult)
+        {
+            try
+            {
+                Adultdata.Update(adult);
+                return Ok(adults);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+        
+        [HttpGet]
+        public async Task<ActionResult<int>> GetOne([FromQuery] int id)
+        {
+            try
+            {
+                Adult specific = Adultdata.get(id);
+                return Ok(specific);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+        
     }
 }

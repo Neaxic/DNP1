@@ -27,10 +27,9 @@ namespace Authorization
             if (cachedUser == null)
             {
                 string userAsJson = await jsRuntime.InvokeAsync<string>("sessionStorage.getItem", "currentUser");
-                if (!string.IsNullOrEmpty(userAsJson))
-                {
-                    cachedUser = JsonSerializer.Deserialize<User>(userAsJson);
-                    identity = SetupClaimsForUser(cachedUser);
+                if (!string.IsNullOrEmpty(userAsJson)) {
+                    User tmp = JsonSerializer.Deserialize<User>(userAsJson);
+                    ValidateLogin(tmp.UserName, tmp.Password);
                 }
             }
             else
@@ -42,24 +41,23 @@ namespace Authorization
             return await Task.FromResult(new AuthenticationState(cachedClaimsPrincipal));
         }
 
-        public void ValidateLogin(string username, string password)
+        public async Task ValidateLogin(string username, string password)
         {
-            Console.WriteLine("Validating log in");
             if (string.IsNullOrEmpty(username)) throw new Exception("Enter username");
             if (string.IsNullOrEmpty(password)) throw new Exception("Enter password");
             
             ClaimsIdentity identity = new ClaimsIdentity();
             try
             {
-                User user = userService.ValidateUser(username, password);
+                User user = await userService.ValidateUser(username, password);
                 identity = SetupClaimsForUser(user);
                 string serialisedData = JsonSerializer.Serialize(user);
-                jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "currentUser", serialisedData);
+                await jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "currentUser", serialisedData);
                 cachedUser = user;
             }
             catch (Exception e)
             {
-                throw e;
+                throw e.GetBaseException();
             }
 
             NotifyAuthenticationStateChanged(

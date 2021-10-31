@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace Models
 {
     public interface IUserService
     {
-        User ValidateUser(string userName, string Password);
+        Task<User> ValidateUser(string userName, string Password);
     }
 }
