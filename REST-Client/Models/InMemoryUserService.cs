@@ -20,7 +20,10 @@ namespace Models
                 throw new Exception($@"Error: {response.StatusCode}, {response.ReasonPhrase}");
 
             string result = await response.Content.ReadAsStringAsync();
-            User login = JsonSerializer.Deserialize<User>(result);
+            User login = JsonSerializer.Deserialize<User>(result, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
             Console.WriteLine(result);
 
             return login;
