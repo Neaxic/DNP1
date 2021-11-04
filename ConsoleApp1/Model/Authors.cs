@@ -1,10 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ConsoleApp1.Model
 {
     public class Authors
     {
-        private int AuthorId { get; set; }
-        private string FristName { get; set; }
-        private string LastName { get; set; }
-        private string Bio { get; set; }
+        [Key]
+        public int AuthorsId { get; set; }
+        public string FristName { get; set; }
+        public string LastName { get; set; }
+        public string Bio { get; set; }
     }
 }
