@@ -16,26 +16,12 @@ namespace REST_Server.Controllers
     {
         private readonly ILogger<AdultController> _logger;
         private IList<User> logins;
+        public ITodosData data = new TodoJSONData();
 
         public LoginController(ILogger<AdultController> logger)
         {
             _logger = logger;
-            logins = new List<User>();
-
-            User lvl1 = new User();
-            lvl1.UserName = "lvl1";
-            lvl1.Password = "123";
-            lvl1.Role = "Mod";
-            lvl1.SecurityLevel = 1;
-            
-            User lvl2 = new User();
-            lvl2.UserName = "lvl2";
-            lvl2.Password = "123";
-            lvl2.Role = "Admin";
-            lvl2.SecurityLevel = 2;
-            
-            logins.Add(lvl1);
-            logins.Add(lvl2);
+            logins = data.GetUsers();
         }
 
         [HttpGet]
